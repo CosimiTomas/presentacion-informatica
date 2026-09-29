@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modalidad Informática — 7mo</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111a2e;
+    --panel-2: #172344;
+    --ink: #eaf0ff;
+    --muted: #9fb0d0;
+    --accent: #4cc9f0;
+    --accent-2: #7c5cff;
+    --line: #223055;
+    --ok: #34d399;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-2: #f0f4ff;
+      --ink: #101828;
+      --muted: #5b6478;
+      --accent: #1a73e8;
+      --accent-2: #6d3bf4;
+      --line: #e3e8f2;
+      --ok: #0e9f6e;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    background:
+      radial-gradient(ellipse at top left, rgba(76,201,240,.10), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(124,92,255,.12), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .stage {
+    width: min(1100px, 100%);
+    aspect-ratio: 16 / 9;
+    max-height: calc(100vh - 32px);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.35);
+    position: relative;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: clamp(26px, 4vw, 56px);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+  }
+  .slide.active { display: flex; animation: fade .4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: none;} }
+
+  h1 { font-size: clamp(30px, 4.4vw, 56px); margin: 0; line-height: 1.02; letter-spacing: -.025em; font-weight: 700; }
+  h2 { font-size: clamp(22px, 3vw, 36px); margin: 0 0 6px; letter-spacing: -.01em; }
+  h3 { font-size: clamp(13px, 1.2vw, 15px); margin: 0; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .18em; }
+  p, li { font-size: clamp(15px, 1.6vw, 18px); line-height: 1.55; margin: 0; }
+  .muted { color: var(--muted); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white; font-weight: 600; font-size: 13px; letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: white; }
+
+  .grid { display: grid; gap: 16px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s, border-color .3s;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    opacity: 0; transition: opacity .3s;
+  }
+  .card:hover::before { opacity: 1; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .card {
+      background: linear-gradient(180deg, #fafbff, #ffffff);
+    }
+  }
+  .card h4 { margin: 0 0 8px; font-size: clamp(17px, 1.8vw, 21px); font-weight: 700; }
+  .card .k {
+    font-size: 11px; color: var(--accent); text-transform: uppercase;
+    letter-spacing: .16em; margin-bottom: 8px; font-weight: 700;
+  }
+
+  .quote {
+    padding: 20px 24px; border-left: 4px solid var(--accent-2);
+    background: linear-gradient(90deg, rgba(124,92,255,.12), rgba(124,92,255,.02));
+    border-radius: 10px;
+    font-size: clamp(15px, 1.7vw, 19px); font-style: italic;
+    color: var(--ink);
+  }
+
+  .kicker { font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: .18em; font-weight: 700; }
+
+  ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ul.clean li { display: flex; align-items: flex-start; gap: 12px; }
+  ul.clean li::before {
+    content: "→"; color: var(--accent); font-weight: 800; flex-shrink: 0;
+    font-size: 18px; line-height: 1.4;
+  }
+  ul.clean.negative li::before { content: "×"; color: var(--muted); }
+
+  /* Slide 1 hero */
+  .hero { justify-content: center; }
+  .hero .big {
+    font-size: clamp(56px, 9vw, 120px); font-weight: 800; line-height: .92; letter-spacing: -.035em;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero .sub { color: var(--muted); font-size: clamp(16px, 1.9vw, 22px); max-width: 720px; margin-top: 8px; }
+  .hero-title {
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .tag {
+    display: inline-flex; padding: 6px 12px; border-radius: 999px;
+    background: rgba(76,201,240,.12); color: var(--accent);
+    font-size: 12px; font-weight: 700; margin: 4px 6px 0 0;
+    border: 1px solid rgba(76,201,240,.25);
+  }
+
+  /* Timeline for year-row */
+  .timeline { display: grid; gap: 0; }
+  .year-row {
+    display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: flex-start;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .year-row:last-child { border-bottom: none; }
+  .year {
+    font-weight: 800; font-size: clamp(24px, 2.8vw, 32px);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -.02em;
+  }
+  .year-content p { color: var(--ink); }
+  .year-content .tag-mini {
+    display: inline-block; margin-top: 8px; font-size: 11px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+  }
+
+  .final .big {
+    font-size: clamp(56px, 9vw, 110px); font-weight: 800; letter-spacing: -.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    line-height: .95;
+  }
+
+  /* Controls */
+  .nav {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; align-items: center;
+    background: rgba(11,18,32,.75); backdrop-filter: blur(10px);
+    padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line);
+    z-index: 10;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .nav { background: rgba(255,255,255,.85); }
+  }
+  .nav button {
+    background: transparent; color: var(--ink); border: 1px solid var(--line);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px;
+    transition: all .2s;
+  }
+  .nav button:hover { background: var(--accent); color: white; border-color: var(--accent); }
+  .counter { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); min-width: 46px; text-align: center; font-weight: 600; }
+
+  .progress {
+    position: absolute; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width .4s cubic-bezier(.2,.8,.2,1);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .slide-num {
+    position: absolute; top: 20px; right: 24px;
+    font-size: 11px; color: var(--muted); font-weight: 700;
+    letter-spacing: .2em; font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 700px) {
+    .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; }
+    .year-row { grid-template-columns: 60px 1fr; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="progress" id="progress"></div>
+
+    <!-- Slide 1 -->
+    <section class="slide active hero">
+      <span class="slide-num">01 / 06</span>
+      <span class="badge" style="align-self:flex-start">Presentación de Modalidades · 2026</span>
+      <div class="big">Informática</div>
+      <div class="hero-title">Cuatro años, un recorrido honesto.</div>
+      <p class="sub">Por qué la elegí, qué me llevo, y qué me hubiese gustado saber cuando estaba sentada donde ustedes.</p>
+    </section>
+
+    <!-- Slide 2: Descripción -->
+    <section class="slide">
+      <span class="slide-num">02 / 06</span>
+      <h3>La modalidad</h3>
+      <h1>¿De qué se trata Informática?</h1>
+      <div class="grid cols-2" style="margin-top: 10px;">
+        <div class="card">
+          <div class="k">Formación personal</div>
+          <h4>Habilidad técnica</h4>
+          <p class="muted">Aprendemos a programar, a diseñar bases de datos, a armar redes y a pensar sistemas de punta a punta. Además te hace pensar de otra manera: desarrollás un pensamiento más lógico y ordenado para resolver cualquier problema.</p>
+        </div>
+        <div class="card">
+          <div class="k">Formación para la sociedad</div>
+          <h4>Aporte a la comunidad</h4>
+          <p class="muted">Los proyectos que hacemos resuelven problemas reales: sistemas para instituciones del barrio, herramientas para el propio colegio. Salimos sabiendo trabajar en equipo y con clientes de verdad.</p>
+        </div>
+      </div>
+      <div style="margin-top: 10px;">
+        <span class="tag">Programación</span>
+        <span class="tag">Bases de datos</span>
+        <span class="tag">Redes</span>
+        <span class="tag">UX / UI</span>
+        <span class="tag">Sensores &amp; ESP32</span>
+        <span class="tag">Gestión de proyectos</span>
+      </div>
+    </section>
+
+    <!-- Slide 3: Expectativas -->
+    <section class="slide">
+      <span class="slide-num">03 / 06</span>
+      <h3>Expectativas</h3>
+      <h1>Yo pensé… pero después</h1>
+      <div class="grid cols-2" style="margin-top: 14px;">
+        <div class="card">
+          <div class="k">Antes de entrar</div>
+          <ul class="clean negative">
+            <li>"Programar es para gente que ya sabe."</li>
+            <li>"Si no me gustan las mates, no me da."</li>
+            <li>"Es una modalidad muy solitaria, cada uno con su compu."</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="k">Después me di cuenta</div>
+          <ul class="clean">
+            <li>Se aprende de cero, con paciencia y con el grupo.</li>
+            <li>Hay mucho de diseño, comunicación y pensar problemas.</li>
+            <li>Las mates ayudan, pero lo importante es la lógica y la constancia.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">
+        Entré pensando que iba a estar sola frente a una pantalla. Terminé siendo PM y UX de un sistema real, coordinando gente.
+      </div>
+    </section>
+
+    <!-- Slide 4: Me llevo -->
+    <section class="slide">
+      <span class="slide-num">04 / 06</span>
+      <h3>Recorrido por año</h3>
+      <h1>Me llevo</h1>
+      <div class="timeline" style="margin-top: 8px;">
+        <div class="year-row">
+          <div class="year">4to</div>
+          <div class="year-content">
+            <p>Primer contacto con la programación y con pensar en algoritmos. Se arma el grupo con el que vas a trabajar los próximos años.</p>
+            <span class="tag-mini">Fundamentos · Algoritmos</span>
+          </div>
+        </div>
+        <div class="year-row">
+          <div class="year">5to</div>
+          <div class="year-content">
+            <p>Programación orientada a objetos y desarrollo de videojuegos básicos. Los proyectos se vuelven más completos y empezás a estructurar el código de manera profesional.</p>
+            <span class="tag-mini">POO · Videojuegos</span>
+          </div>
+        </div>
+        <div class="year-row">
+          <div class="year">6to</div>
+          <div class="year-content">
+            <p>Programación con sensores y placas ESP32, bases de datos y redes. Integrás software con hardware y ves cómo tu código puede controlar el mundo físico.</p>
+            <span class="tag-mini">ESP32 · Datos · Redes</span>
+          </div>
+        </div>
+        <div class="year-row">
+          <div class="year">7mo</div>
+          <div class="year-content">
+            <p>Proyecto anual con cliente real más las prácticas profesionalizantes. Se pone serio, pero llegás listo.</p>
+            <span class="tag-mini">Proyecto final · Prácticas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Último año -->
+    <section class="slide">
+      <span class="slide-num">05 / 06</span>
+      <h3>Después de 7mo</h3>
+      <h1>Confirmo</h1>
+      <div class="grid cols-3" style="margin-top: 12px;">
+        <div class="card">
+          <div class="k">No hagan</div>
+          <h4>Dejar todo para último momento</h4>
+          <p class="muted">Los TPs se acumulan rápido. Organizarse en grupo desde el arranque cambia todo.</p>
+        </div>
+        <div class="card">
+          <div class="k">Facultad</div>
+          <h4>Sirve para cualquier carrera</h4>
+          <p class="muted">La informática es una herramienta transversal: sigas la carrera que sigas, saber programar, manejar datos y pensar de forma lógica te va a servir siempre.</p>
+        </div>
+        <div class="card">
+          <div class="k">Práctica / Trabajo</div>
+          <h4>Ya sos empleable</h4>
+          <p class="muted">Con el título y lo que hicimos en 7mo, se puede empezar a trabajar en soporte, desarrollo junior o diseño.</p>
+        </div>
+      </div>
+      <div class="quote">
+        Si te gusta resolver problemas y no te asusta empezar sin saber, esta modalidad te da herramientas para cualquier camino.
+      </div>
+    </section>
+
+    <!-- Slide 6: Cierre -->
+    <section class="slide final" style="justify-content:center; align-items:center; text-align:center;">
+      <span class="slide-num">06 / 06</span>
+      <span class="kicker">Presentación de Modalidades · 2026</span>
+      <div class="big">¡Buena elección!</div>
+      <p class="muted" style="max-width: 620px; font-size: clamp(16px, 1.9vw, 20px);">Cualquier duda que tengan sobre Informática, pregunten. Estamos para eso.</p>
+      <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600;">
+        Instituto Leonardo Murialdo · Villa Bosch
+      </div>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button id="prev" aria-label="Anterior">‹</button>
+    <div class="counter"><span id="cur">1</span> / <span id="total">6</span></div>
+    <button id="next" aria-label="Siguiente">›</button>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const cur = document.getElementById('cur');
+  const totalEl = document.getElementById('total');
+  const progress = document.getElementById('progress');
+  totalEl.textContent = total;
+  let i = 0;
+  function go(n) {
+    i = (n + total) % total;
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    cur.textContent = i + 1;
+    progress.style.width = ((i + 1) / total * 100) + '%';
+  }
+  document.getElementById('next').onclick = () => go(i + 1);
+  document.getElementById('prev').onclick = () => go(i - 1);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') go(i + 1);
+    if (e.key === 'ArrowLeft') go(i - 1);
+  });
+  go(0);
+</script>
+</body>
+</html>
