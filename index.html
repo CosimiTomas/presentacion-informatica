@@ -85,6 +85,7 @@
   .grid { display: grid; gap: 16px; }
   .grid.cols-2 { grid-template-columns: 1fr 1fr; }
   .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 
   .card {
     background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
@@ -213,7 +214,7 @@
   }
 
   @media (max-width: 700px) {
-    .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; }
+    .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
     .year-row { grid-template-columns: 60px 1fr; gap: 12px; }
   }
 </style>
@@ -327,11 +328,13 @@
     <section class="slide">
       <span class="slide-num">05 / 06</span>
       <h3>Después de 7mo</h3>
-      <h1>Confirmo</h1>
-      <div class="quote" style="margin-top: 10px;">
-        Pensaba que la modalidad me iba a dar herramientas concretas para el futuro, y no una carrera cerrada en un solo camino. Después de estos años, lo confirmo: te forma para pensar, resolver y adaptarte a lo que venga.
-      </div>
-      <div class="grid cols-3" style="margin-top: 10px;">
+      <h1>Balance final</h1>
+      <div class="grid cols-4" style="margin-top: 12px;">
+        <div class="card">
+          <div class="k">Confirmo</div>
+          <h4>Te da herramientas reales</h4>
+          <p class="muted">Pensaba que iba a salir con herramientas concretas para el futuro, sin encerrarme en un solo camino. Lo confirmo: te forma para pensar, resolver y adaptarte.</p>
+        </div>
         <div class="card">
           <div class="k">No hagan</div>
           <h4>Dejar todo para último momento</h4>
